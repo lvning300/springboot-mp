@@ -1,0 +1,34 @@
+
+server:
+  port: 9020
+spring:
+  application:
+    name: lambda-service
+  # DataSource Config
+  datasource:
+    hikari:
+      idle-timeout: 200000
+      maximum-pool-size: 10
+      minimum-idle: 30
+      connection-timeout: 600000
+      connection-test-query: SELECT 1
+      pool-name: HikariPool
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mp?useSSL=false&useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=false&allowMultiQueries=true
+    username: root
+    password: 123456
+
+
+# Logger Config
+logging:
+  level:
+    com.demo.mp: debug
+
+#mybatis-plus Config
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.demo.mp.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
