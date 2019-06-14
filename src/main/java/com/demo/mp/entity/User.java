@@ -26,9 +26,10 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id",type = IdType.INPUT)
+    //@TableId(value = "id",type = IdType.INPUT)
     private String id;
 
+    @TableId(value = "user_name", type = IdType.INPUT)
     private String userName;
 
     private Integer age;

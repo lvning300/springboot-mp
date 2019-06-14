@@ -22,13 +22,18 @@ spring:
 # Logger Config
 logging:
   level:
-    com.demo.mp: debug
+    root: warn #info
+    com.demo.mp.mapper: trace #info
+  pattern:
+    console: '%p%m%n'
 
-#mybatis-plus Config
+# Mybatis-plus Config
 mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: com.demo.mp.entity
   configuration:
     map-underscore-to-camel-case: true
+
   global-config:
     banner: false
+    field-strategy: 2

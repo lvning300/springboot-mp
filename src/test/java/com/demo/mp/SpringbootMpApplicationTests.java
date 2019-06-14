@@ -1,7 +1,7 @@
 package com.demo.mp;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.demo.mp.entity.User;
-import com.demo.mp.mapper.UserMapper;
 import com.demo.mp.service.IUserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -20,29 +21,27 @@ public class SpringbootMpApplicationTests {
     @Autowired
     IUserService userService;
 
-    /*
-     *
-     *saveOrUpdateBatch 依赖ID操作如果ID不存在则插入否则更新
-     *
-     */
 
+    /**
+     * saveOrUpdateBatch 依赖ID操作如果ID不存在则插入否则更新
+     */
     @Test
     public void insertOrUpdate() {
 
         User userA = User.builder()
-                .id("987654321Qwert123")
-                .userName("张三")
-                .age(48)
-                .email("zs@163.com")
-                .managerId(UUID.randomUUID().toString())
+                .id(getUUId())
+                .userName("jack")
+                .age(12)
+                .email("jack@163.com")
+                .managerId(getUUId())
                 .build();
 
         User userB = User.builder()
-                .id("1234567890SADF456")
-                .userName("赵四")
-                .age(35)
-                .email("zs@163.com")
-                .managerId(UUID.randomUUID().toString())
+                .id(getUUId())
+                .userName("sunny")
+                .age(12)
+                .email("sunny@163.com")
+                .managerId(getUUId())
                 .build();
 
         List<User> users = Arrays.asList(userA, userB);
@@ -53,35 +52,73 @@ public class SpringbootMpApplicationTests {
 
     }
 
+    private String getUUId() {
+        return UUID.randomUUID().toString();
+    }
 
 
-    /*
-     *
-     *saveOrUpdateBatch 依赖ID操作如果ID则也表示更新成功
-     *
+    /**
+     * saveBatch 批量保存
+     */
+    @Test
+    public void saveBatch() {
+
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+
+            User userB = User.builder()
+                    .id(getUUId())
+                    .userName("钱大妈A" + i)
+                    .age(i)
+                    .email("zdm@16" + i + ".com")
+                    .managerId(getUUId())
+                    .build();
+            users.add(userB);
+        }
+
+        userService.insertBatch(users);
+
+    }
+
+
+    /**
+     * updateBatch 依赖ID操作如果ID则也表示更新成功
      */
     @Test
     public void updateBatch() {
 
-        User userA = User.builder()
-                .id("987654321Qwert123456")
-                .userName("张三")
-                .age(14)
-                .email("zs@163.com")
-                .managerId(UUID.randomUUID().toString())
-                .build();
+        List<User> users = new ArrayList<>();
 
-        User userB = User.builder()
-                .id("1234567890SADF456789")
-                .userName("赵四")
-                .age(12)
-                .email("zs@163.com")
-                .managerId(UUID.randomUUID().toString())
-                .build();
+        for (int i = 0; i < 2; i++) {
+            User userB = User.builder()
+                    //.id(UUID.randomUUID().toString())
+                    .userName("钱大妈A" + i)
+                    .age(35)
+                    .email("zdm@16" + i + ".com")
+                    //.managerId(UUID.randomUUID().toString())
+                    .build();
+            users.add(userB);
+        }
 
-        List<User> users = Arrays.asList(userA, userB);
+        userService.updateBatch(users);
+    }
 
-        boolean updateBatch = userService.updateBatchById(users);
+
+    @Test
+    public void selectUserByPage() {
+
+        IPage<User> userIPage = userService.queryUserByPage(1, 10, "钱大");
+        List<User> records = userIPage.getRecords();
+        records.forEach(System.out::println);
+
+    }
+
+    @Test
+    public void queryUserByPageNotUseCount() {
+
+        IPage<User> userIPage = userService.queryUserByPageNotUseCount(1, 10, "钱大");
+        List<User> records = userIPage.getRecords();
+        records.forEach(System.out::println);
 
     }
 
