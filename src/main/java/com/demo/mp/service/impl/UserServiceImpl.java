@@ -1,6 +1,5 @@
 package com.demo.mp.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -86,6 +85,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     }
 
+    public List<User> queryAll() {
+
+        return list();
+
+    }
+
     public Boolean lambdaUpdate(Integer age) {
 
         return lambdaUpdate()
@@ -152,17 +157,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public IPage<User> queryUserByPage(int currentPage, int pageSize, String userName) {
 
-        Page<User> userPage = new Page<>(currentPage,pageSize);
+        Page<User> userPage = new Page<>(currentPage, pageSize);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.like("user_name", userName);
-        return page(userPage,queryWrapper);
+        return page(userPage, queryWrapper);
     }
 
     @Override
     public IPage<User> queryUserByPageNotUseCount(int currentPage, int pageSize, String userName) {
-        Page<User> userPage = new Page<>(currentPage,pageSize,false);
+        Page<User> userPage = new Page<>(currentPage, pageSize, false);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.like("user_name", userName);
-        return page(userPage,queryWrapper);
+        return page(userPage, queryWrapper);
     }
+
+
 }

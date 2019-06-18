@@ -22,10 +22,7 @@ spring:
 # Logger Config
 logging:
   level:
-    root: warn #info
-    com.demo.mp.mapper: trace #info
-  pattern:
-    console: '%p%m%n'
+    com.demo.mp.mapper: debug #info
 
 # Mybatis-plus Config
 mybatis-plus:
@@ -37,3 +34,8 @@ mybatis-plus:
   global-config:
     banner: false
     field-strategy: 2
+
+security:
+  oauth2:
+    resource:
+      filter-order: 3

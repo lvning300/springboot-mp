@@ -3,12 +3,15 @@ package com.demo.mp;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.demo.mp.entity.User;
 import com.demo.mp.service.IUserService;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -121,6 +124,16 @@ public class SpringbootMpApplicationTests {
         records.forEach(System.out::println);
 
     }
+
+    @Test
+    public void readFile() throws IOException {
+
+        InputStream resourceAsStream = this.getClass().getResourceAsStream("./private_key.txt");
+        String string = IOUtils.toString(resourceAsStream);
+        System.out.println(string);
+    }
+
+
 
 
 }

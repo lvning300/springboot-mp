@@ -119,4 +119,7 @@ public interface IUserService extends IService<User> {
      * @return Boolean
      */
     IPage<User> queryUserByPageNotUseCount(int currentPage, int pageSize, String userName);
+
+    List<User> queryAll();
+
 }
