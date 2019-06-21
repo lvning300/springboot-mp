@@ -59,16 +59,36 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
         return new JwtTokenStore(tokenEnhancer());
     }
 
+    /***
+     * 定义授权和令牌端点以及令牌服务。
+     * @param endpoints
+     * @throws Exception
+     */
+
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore())
+        endpoints.authenticationManager(authenticationManager)
+                .tokenStore(tokenStore())
                 .accessTokenConverter(tokenEnhancer());
     }
+
+    /****
+     *
+     * 定义令牌端点上的安全性约束。
+     * @param security
+     * @throws Exception
+     */
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
     }
+
+    /***
+     * 定义客户端详细信息服务的配置器。可以初始化客户端详细信息，也可以只引用现有
+     * @param clients
+     * @throws Exception
+     */
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
