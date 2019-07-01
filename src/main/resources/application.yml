@@ -1,4 +1,4 @@
-
+auth-server-url: http://localhost:9020 # 授权服务地址
 server:
   port: 9020
 spring:
@@ -39,3 +39,10 @@ security:
   oauth2:
     resource:
       filter-order: 3
+
+swagger2.auth:
+  clientId: tutorialspoint
+  clientSecret: my-secret-key
+  authorizationUri: ${auth-server-url}/oauth/authorize
+  tokenUri: ${auth-server-url}/oauth/token
+  scopes: AUTH

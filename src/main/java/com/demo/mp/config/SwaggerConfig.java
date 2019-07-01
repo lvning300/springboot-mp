@@ -1,26 +1,47 @@
 package com.demo.mp.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.ModelRef;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.service.Parameter;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.ApiKeyVehicle;
+import springfox.documentation.swagger.web.SecurityConfiguration;
+import springfox.documentation.swagger.web.SecurityConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 
 @Configuration
 @EnableSwagger2
+@ConditionalOnProperty(prefix = "swagger2", name = "auth.clientId")
 public class SwaggerConfig {
+
+    @Value("${swagger2.auth.clientId:}")
+    private String clientId;
+    @Value("${swagger2.auth.clientSecret:}")
+    private String clientSecret;
+    @Value("${swagger2.auth.authorizationUri:}")
+    private String authorizationUri;
+    @Value("${swagger2.auth.tokenUri:}")
+    private String tokenUri;
+    @Value("${swagger2.auth.scopes:}")
+    private String scopes;
+
 
     @Bean
     public Docket api() {
@@ -37,7 +58,10 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.demo.mp.controller"))
                 .paths(PathSelectors.any())
                 .build().apiInfo(info())
-                .globalOperationParameters(pars);
+                //.globalOperationParameters(pars)
+                .securityContexts(Collections.singletonList(securityContext()))
+                .securitySchemes(Arrays.asList(securitySchema(), apiKey(), apiCookieKey()));
+
     }
 
     private ApiInfo info() {
@@ -51,4 +75,97 @@ public class SwaggerConfig {
                 "Commercial Licensing", "http://www.lvning300.com",
                 Collections.emptyList());
     }
+
+    /*private SecurityScheme securityScheme() {
+        return new OAuthBuilder()
+                .name("OAuth2")
+                .grantTypes(grantTypes())
+                .scopes(Arrays.asList(scopes()))
+                .build();
+    }
+
+    *//**
+     * 设置 swagger2 认证的安全上下文
+     *//*
+    private SecurityContext securityContext() {
+        return SecurityContext.builder()
+                .securityReferences(Collections.singletonList(new SecurityReference("oauth2", scopes())))
+                .forPaths(PathSelectors.any())
+                .build();
+    }
+
+    *//**
+     * 设置认证的scope
+     * @return
+     *//*
+    private AuthorizationScope[] scopes() {
+        return new AuthorizationScope[]{
+                new AuthorizationScope("ALL", "All scope!")
+        };
+    }
+
+    *//**
+     *  使用密码模式
+     *//*
+    @Bean
+    List<GrantType> grantTypes() {
+        List<GrantType> grantTypes = new ArrayList<>();
+        GrantType grantType = new ResourceOwnerPasswordCredentialsGrant(tokenUri);
+        grantTypes.add(grantType );
+        return grantTypes;
+    }
+*/
+
+
+    @Bean
+    public SecurityScheme apiKey() {
+        return new ApiKey(HttpHeaders.AUTHORIZATION, "apiKey", "header");
+    }
+
+    @Bean
+    public SecurityScheme apiCookieKey() {
+        return new ApiKey(HttpHeaders.COOKIE, "apiKey", "cookie");
+    }
+
+    private OAuth securitySchema() {
+
+        List<AuthorizationScope> authorizationScopeList = newArrayList();
+        authorizationScopeList.add(new AuthorizationScope("read", "read all"));
+        authorizationScopeList.add(new AuthorizationScope("write", "access all"));
+
+        List<GrantType> grantTypes = newArrayList();
+        GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(tokenUri);
+        grantTypes.add(passwordCredentialsGrant);
+
+        return new OAuth("oauth2", authorizationScopeList, grantTypes);
+    }
+
+    private SecurityContext securityContext() {
+        return SecurityContext.builder().securityReferences(defaultAuth())
+                .build();
+    }
+
+
+
+    private List<SecurityReference> defaultAuth() {
+
+        final AuthorizationScope[] authorizationScopes = new AuthorizationScope[3];
+        authorizationScopes[0] = new AuthorizationScope("read", "read all");
+        authorizationScopes[1] = new AuthorizationScope("trust", "trust all");
+        authorizationScopes[2] = new AuthorizationScope("write", "write all");
+
+        return Collections.singletonList(new SecurityReference("oauth2", authorizationScopes));
+    }
+
+    @Bean
+    public SecurityConfiguration security() {
+       return SecurityConfigurationBuilder.builder()
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .build();
+
+
+        //(clientId, clientSecret, "", "", "Bearer access token", ApiKeyVehicle.HEADER, HttpHeaders.AUTHORIZATION,"");
+    }
+
 }

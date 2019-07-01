@@ -37,9 +37,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().anyRequest().authenticated().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.NEVER);
     }
+    /**
+     * 让Security 忽略这些url，不做拦截处理
+     *
+     * @param
+     * @throws Exception
+     */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/resources/**").antMatchers("/swagger-ui.html");
+        web.ignoring().antMatchers
+                ("/swagger-ui.html/**", "/webjars/**",
+                        "/swagger-resources/**", "/v2/api-docs/**",
+                        "/swagger-resources/configuration/ui/**", "/swagger-resources/configuration/security/**",
+                        "/images/**");
     }
     @Override
     @Bean
